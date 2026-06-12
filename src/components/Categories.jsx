@@ -147,7 +147,7 @@ export default function Categories() {
                 </div>
                 <div className="image-sheen relative min-h-[220px] overflow-hidden bg-smoke">
                   <img
-                    className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                    className="h-full w-full object-cover object-[18%_50%] transition duration-700 group-hover:scale-105"
                     src="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=900&q=82"
                     alt="Modern pendant light over a room"
                   />

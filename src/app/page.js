@@ -13,6 +13,7 @@ import Gallery from "@/components/Gallery";
 import Testimonials from "@/components/Testimonials";
 import ContactForm from "@/components/ContactForm";
 import Footer from "@/components/Footer";
+import ScrollToTop from "@/components/ScrollToTop";
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
@@ -43,6 +44,7 @@ export default function Home() {
           <ContactForm />
         </main>
         <Footer />
+        <ScrollToTop />
       </motion.div>
     </>
   );

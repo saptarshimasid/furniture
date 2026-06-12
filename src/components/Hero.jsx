@@ -1,11 +1,57 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useState } from "react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import TiltCard from "./TiltCard";
 import { ArrowRight, Star } from "lucide-react";
 
 export default function Hero() {
   const { scrollY } = useScroll();
+
+  // Slideshow config
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [slideDirection, setSlideDirection] = useState(0);
+
+  const slideImages = [
+    "https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=82",
+    "https://images.unsplash.com/photo-1592078615290-033ee584e267?auto=format&fit=crop&w=900&q=82"
+  ];
+
+  const handleNext = () => {
+    setSlideDirection(1);
+    setSlideIndex((prev) => (prev + 1) % slideImages.length);
+  };
+
+  const handlePrev = () => {
+    setSlideDirection(-1);
+    setSlideIndex((prev) => (prev - 1 + slideImages.length) % slideImages.length);
+  };
+
+  const slideVariants = {
+    enter: (direction) => ({
+      x: direction > 0 ? "100%" : "-100%",
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      transition: {
+        x: { type: "spring", stiffness: 300, damping: 30 },
+        opacity: { duration: 0.2 },
+      },
+    },
+    exit: (direction) => ({
+      x: direction < 0 ? "100%" : "-100%",
+      opacity: 0,
+      transition: {
+        x: { type: "spring", stiffness: 300, damping: 30 },
+        opacity: { duration: 0.2 },
+      },
+    }),
+  };
 
   // Create subtle parallax offsets for different cards
   const yLivingRoom = useTransform(scrollY, [0, 800], [0, -70]);
@@ -187,33 +233,43 @@ export default function Hero() {
             className="absolute bottom-0 left-0 w-full max-w-sm z-30 p-2 sm:p-0 sm:left-8"
           >
             <TiltCard className="group rounded-lg bg-white p-3 shadow-soft">
-              <div className="image-sheen relative h-72 overflow-hidden rounded-lg bg-smoke">
-                <img
-                  className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                  src="https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&w=900&q=82"
-                  alt="Modern lounge chair beside a bright window"
-                />
-                <span className="absolute left-4 top-4 rounded-full bg-sun px-3 py-1.5 text-xs font-extrabold text-pine">New Drop</span>
+              <div className="relative h-72 overflow-hidden rounded-lg bg-smoke select-none">
+                <AnimatePresence initial={false} custom={slideDirection}>
+                  <motion.img
+                    key={slideIndex}
+                    src={slideImages[slideIndex]}
+                    custom={slideDirection}
+                    variants={slideVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    className="absolute inset-0 h-full w-full object-cover"
+                    alt={`Lounge Edit image ${slideIndex + 1}`}
+                  />
+                </AnimatePresence>
+                <span className="absolute left-4 top-4 rounded-full bg-sun px-3 py-1.5 text-xs font-extrabold text-pine z-10 shadow-card">New Drop</span>
               </div>
               <div className="mt-4 flex items-center justify-between">
                 <div>
-                  <h3 className="font-extrabold">Lounge Edit</h3>
+                  <h3 className="font-extrabold text-ink">Lounge Edit</h3>
                   <p className="mt-1 text-sm text-ink/50">Fresh silhouettes for compact spaces</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 z-10">
                   <button
+                    onClick={handlePrev}
                     type="button"
                     aria-label="Previous collection"
-                    className="grid h-10 w-10 place-items-center rounded-full bg-forest text-white transition hover:bg-pine"
+                    className="grid h-10 w-10 place-items-center rounded-full bg-forest text-white transition-colors duration-300 hover:bg-sun hover:text-pine cursor-pointer focus:outline-none"
                   >
                     <svg aria-hidden="true" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M19 12H5M12 19l-7-7 7-7" />
                     </svg>
                   </button>
                   <button
+                    onClick={handleNext}
                     type="button"
                     aria-label="Next collection"
-                    className="grid h-10 w-10 place-items-center rounded-full bg-sun text-pine transition hover:bg-saffron"
+                    className="grid h-10 w-10 place-items-center rounded-full bg-forest text-white transition-colors duration-300 hover:bg-sun hover:text-pine cursor-pointer focus:outline-none"
                   >
                     <svg aria-hidden="true" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M5 12h14M12 5l7 7-7 7" />
